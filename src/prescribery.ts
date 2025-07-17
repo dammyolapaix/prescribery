@@ -1,6 +1,7 @@
 import { HttpsClient } from "./http-client";
 import { ENVIRONMENTS } from "./utils";
 import type { PrescriberyConfig } from "./types";
+import { TokenResource } from "./resources/token";
 
 /**
  * Extended configuration for the Prescribery client
@@ -39,6 +40,8 @@ export class Prescribery {
   private readonly environment: "production" | "staging";
   /** Debug mode flag */
   private readonly debug: boolean;
+  /** Token management API */
+  readonly token: TokenResource;
 
   /**
    * Creates a new Prescribery client instance
@@ -78,6 +81,13 @@ export class Prescribery {
       headers: {
         "Content-Type": "application/json",
       },
+      debug: this.debug,
+    });
+
+    // Initialize resources after client is created
+    this.token = new TokenResource({
+      apiKey: this.apiKey,
+      environment: this.environment,
       debug: this.debug,
     });
   }
