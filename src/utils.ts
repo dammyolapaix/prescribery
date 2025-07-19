@@ -1,8 +1,11 @@
 import type {
   PrescriberyResponse,
+  PrescriberySuccessResponse,
+  PrescriberyErrorResponse,
   HttpHeaders,
   RequestBody,
   QueryParams,
+  PrescriberyAlternativeResponse,
 } from "./types";
 
 /** Environment-specific configuration */
@@ -14,53 +17,28 @@ export const ENVIRONMENTS: Record<"production" | "staging", string> = {
 /**
  * Normalize inconsistent API responses into a consistent format
  */
-export function normalizeResponse<T>(data: unknown): PrescriberyResponse<T> {
+export function normalizeResponse<T>(
+  data: PrescriberyResponse<T> | PrescriberyAlternativeResponse<T>
+): PrescriberyResponse<T> {
   // Handle format with "status" field
   if (typeof data === "object" && data !== null && "status" in data) {
-    const response = data as {
-      status: boolean | "failed";
-      message: string;
-      data?: T;
-    };
-
-    if (response.status === false || response.status === "failed") {
+    if (data.status === false || data.status === "failed") {
       return {
         code: 1,
-        message: response.message,
-      };
+        message: data.message,
+      } as PrescriberyResponse<T>;
     }
 
     return {
       code: 0,
-      message: response.message,
-      data: response.data,
-    };
+      message: data.message,
+      data: data.data,
+    } as PrescriberyResponse<T>;
   }
 
   // Handle standard response format with "code" field
   if (typeof data === "object" && data !== null && "code" in data) {
-    const response = data as {
-      code: 0 | 1;
-      message: string;
-      reason?: { [key: string]: string[] };
-    } & T;
-
-    if (response.code === 1) {
-      return {
-        code: 1,
-        message: response.message,
-        reason: response.reason,
-      };
-    }
-
-    // For success (code: 0), extract data by removing code and message
-    const { code, message, reason, ...dataFields } = response;
-    return {
-      code: 0,
-      message,
-      data: dataFields as T,
-      reason,
-    };
+    return data;
   }
 
   // Fallback for unknown format
@@ -210,8 +188,8 @@ export function parseResponseData(data: string, contentType: string): unknown {
  */
 export function isSuccess<T>(
   response: PrescriberyResponse<T>
-): response is PrescriberyResponse<T> & { code: 0; data: T } {
-  return response.code === 0;
+): response is PrescriberySuccessResponse<T> {
+  return "code" in response && response.code === 0;
 }
 
 /**
@@ -219,6 +197,6 @@ export function isSuccess<T>(
  */
 export function isError<T>(
   response: PrescriberyResponse<T>
-): response is PrescriberyResponse<T> & { code: 1 } {
-  return response.code === 1;
+): response is PrescriberyErrorResponse {
+  return "code" in response && response.code === 1;
 }

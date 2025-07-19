@@ -14,16 +14,30 @@ export type EnvironmentUrls = {
   staging: "https://staging.doctalkgo.com/api/dtg/v1";
 };
 
-/**
- * Normalized response format for all endpoints
- */
-export type PrescriberyResponse<T> = {
-  code: 0 | 1;
+export type PrescriberySuccessResponse<T> = {
+  code: 0;
   message: string;
-  data?: T;
+} & T;
+
+export type PrescriberyErrorResponse = {
+  code: 1;
+  message: string;
   reason?: {
     [key: string]: string[];
   };
+};
+
+/**
+ * Normalized response format for all endpoints
+ */
+export type PrescriberyResponse<T> =
+  | PrescriberySuccessResponse<T>
+  | PrescriberyErrorResponse;
+
+export type PrescriberyAlternativeResponse<T> = {
+  status: boolean | "failed";
+  message: string;
+  data?: T;
 };
 
 /**

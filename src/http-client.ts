@@ -4,6 +4,7 @@ import type {
   HttpsClientConfig,
   RequestOptions,
   PrescriberyResponse,
+  PrescriberyAlternativeResponse,
 } from "./types";
 import { NetworkError, TimeoutError, ParseError } from "./errors";
 import {
@@ -252,7 +253,10 @@ export class HttpsClient {
             try {
               const responseContentType =
                 res.headers["content-type"] || "application/json";
-              const parsedData = parseResponseData(data, responseContentType);
+              const parsedData = parseResponseData(
+                data,
+                responseContentType
+              ) as PrescriberyResponse<T> | PrescriberyAlternativeResponse<T>;
               const normalizedResponse = normalizeResponse<T>(parsedData);
 
               // Log response if debug is enabled

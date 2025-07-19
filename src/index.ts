@@ -20,8 +20,17 @@
  * // Generate access token
  * const tokenResponse = await prescribery.token.accessToken()
  *
- * // Use token with other resources
- * console.log('Access token:', tokenResponse.access_token)
+ * // List patients
+ * const patients = await prescribery.patients.list(tokenResponse.access_token, {
+ *   facility_id: 'facility123',
+ *   record_id: 'record456'
+ * })
+ *
+ * if (isSuccess(patients)) {
+ *   console.log('Patients:', patients.data?.members)
+ * } else if (isError(patients)) {
+ *   console.error('Error:', patients.message)
+ * }
  * ```
  *
  * @version 1.0.0
@@ -36,6 +45,9 @@ export { Prescribery } from "./prescribery";
 export type {
   PrescriberyConfig,
   PrescriberyResponse,
+  PrescriberySuccessResponse,
+  PrescriberyErrorResponse,
+  PrescriberyAlternativeResponse,
   HttpMethod,
   RequestBody,
   QueryParams,
