@@ -69,6 +69,11 @@ export type {
   TokenConfig,
 } from "./resources/token/types";
 
+// Patient resource exports
+export type { PatientListParams, PatientConfig } from "./resources/patients";
+
+export type { Patient, PatientListResponse } from "./resources/patients/types";
+
 // Error exports
 export {
   HttpClientError,

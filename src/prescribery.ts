@@ -2,6 +2,7 @@ import { HttpsClient } from "./http-client";
 import { ENVIRONMENTS } from "./utils";
 import type { PrescriberyConfig } from "./types";
 import { TokenResource } from "./resources/token";
+import { PatientResource } from "./resources/patients";
 
 /**
  * Extended configuration for the Prescribery client
@@ -42,6 +43,8 @@ export class Prescribery {
   private readonly debug: boolean;
   /** Token management API */
   readonly token: TokenResource;
+  /** Patient management API */
+  readonly patients: PatientResource;
 
   /**
    * Creates a new Prescribery client instance
@@ -88,6 +91,11 @@ export class Prescribery {
     this.token = new TokenResource({
       apiKey: this.apiKey,
       environment: this.environment,
+      debug: this.debug,
+    });
+
+    // Initialize patient resource
+    this.patients = new PatientResource(this.client, {
       debug: this.debug,
     });
   }
