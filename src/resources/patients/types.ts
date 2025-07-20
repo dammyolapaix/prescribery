@@ -19,3 +19,29 @@ export type Patient = {
 export type PatientListResponse = {
   members: Patient[];
 };
+
+type Address = {
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+};
+
+export type PatientCreateRequest = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  dob: string;
+  gender: string;
+  mobile?: string;
+  address_line1?: string;
+  address_line2?: string;
+  postal_code?: string;
+  city?: string;
+  state?: string;
+  "create_contact_on[]"?: string;
+  welcome_email?: boolean;
+  shipping_address?: Address;
+  residential_address?: Address;
+};
